@@ -53,8 +53,8 @@
 ###
 # 0. Install dependencies
 export DEBIAN_FRONTEND=noninteractive
-sudo apt-get update -q
-sudo apt-get install -y build-essential git libgmp-dev libmpfr-dev libmpc-dev zlib1g-dev libtool texinfo
+#sudo apt-get update -q
+#sudo apt-get install -y build-essential git libgmp-dev libmpfr-dev libmpc-dev zlib1g-dev libtool texinfo
 
 ###
 # 1. Define Variables
@@ -67,7 +67,7 @@ export GDB=gdb-7.9
 # 1.2 Target system
 export TARGET=arm-none-eabi
 # 1.3 Build directory
-export PREFIX=~/arm
+export PREFIX=/home/descent/work/st_toolchain/arm.softfp
 OLDPATH=$PATH
 export PATH=$PREFIX/bin:$OLDPATH
 export SCRIPTDIR=$(pwd)
@@ -205,7 +205,7 @@ mkdir -p $GDB
 # 3.1 Build Binutils
 export PATH=$PREFIX/bin:$OLDPATH
 cd $PREFIX/build/$BINUTILS
-$PREFIX/src/$BINUTILS/configure --target=$TARGET --prefix=$PREFIX --with-cpu=cortex-m4 --with-fpu=fpv4-sp-d16 --with-float=hard --with-mode=thumb --enable-interwork --enable-multilib --with-gnu-as --with-gnu-ld --disable-nls
+$PREFIX/src/$BINUTILS/configure --target=$TARGET --prefix=$PREFIX --with-cpu=cortex-m3 --with-float=soft --with-mode=thumb --enable-interwork --enable-multilib --with-gnu-as --with-gnu-ld --disable-nls
 # The meaning of flags:
 # --with-cpu=cortex-m4 ..... cortex-m4 CPU
 # --with-fpu=fpv4-sp-d16 ... this CPU has fpv4-sp-d16 FPU
@@ -223,7 +223,7 @@ make install
 # 3.2 Build Binutils-nano
 export PATH=$PREFIX/build/nano-libs/bin:$OLDPATH
 cd $PREFIX/build/$BINUTILS-nano
-$PREFIX/src/$BINUTILS/configure --target=$TARGET --prefix=$PREFIX/build/nano-libs --with-cpu=cortex-m4 --with-fpu=fpv4-sp-d16 --with-float=hard --with-mode=thumb --enable-interwork --enable-multilib --with-gnu-as --with-gnu-ld --disable-nls
+$PREFIX/src/$BINUTILS/configure --target=$TARGET --prefix=$PREFIX/build/nano-libs --with-cpu=cortex-m3 --with-float=soft --with-mode=thumb --enable-interwork --enable-multilib --with-gnu-as --with-gnu-ld --disable-nls
 # make clean
 make -j4 all
 make install
@@ -231,7 +231,7 @@ make install
 # 3.3 Build & install bootstrap GCC (C cross-compiler only)
 export PATH=$PREFIX/bin:$OLDPATH
 cd $PREFIX/build/$GCC-boot
-$PREFIX/src/$GCC/configure --target=$TARGET --prefix=$PREFIX --with-cpu=cortex-m4 --with-fpu=fpv4-sp-d16 --with-float=hard --with-mode=thumb --enable-interwork --enable-multilib --with-system-zlib --with-newlib --without-headers --disable-shared --disable-nls --with-gnu-as --with-gnu-ld --enable-languages="c"
+$PREFIX/src/$GCC/configure --target=$TARGET --prefix=$PREFIX --with-cpu=cortex-m3 --with-float=soft --with-mode=thumb --enable-interwork --enable-multilib --with-system-zlib --with-newlib --without-headers --disable-shared --disable-nls --with-gnu-as --with-gnu-ld --enable-languages="c"
 # The meaning of flags (see https://gcc.gnu.org/install/configure.html):
 # --with-system-zlib ...... use the system's zlib library
 # The meaning of flags:
@@ -245,7 +245,7 @@ make install-gcc
 # 3.4 Build & install bootstrap GCC-nanoboot (C cross-compiler only)
 export PATH=$PREFIX/build/nano-libs/bin:$OLDPATH
 cd $PREFIX/build/$GCC-nanoboot
-$PREFIX/src/$GCC/configure --target=$TARGET --prefix=$PREFIX/build/nano-libs --with-cpu=cortex-m4 --with-fpu=fpv4-sp-d16 --with-float=hard --with-mode=thumb --enable-interwork --enable-multilib --with-system-zlib --with-newlib --without-headers --disable-shared --disable-nls --with-gnu-as --with-gnu-ld --enable-languages="c"
+$PREFIX/src/$GCC/configure --target=$TARGET --prefix=$PREFIX/build/nano-libs --with-cpu=cortex-m3 --with-float=soft --with-mode=thumb --enable-interwork --enable-multilib --with-system-zlib --with-newlib --without-headers --disable-shared --disable-nls --with-gnu-as --with-gnu-ld --enable-languages="c"
 # make clean
 make -j4 all-gcc
 make install-gcc
@@ -253,7 +253,7 @@ make install-gcc
 # 3.5 Build & install newlib library
 export PATH=$PREFIX/bin:$OLDPATH
 cd $PREFIX/build/$NEWLIB
-$PREFIX/src/$NEWLIB/configure --target=$TARGET --prefix=$PREFIX --with-cpu=cortex-m4 --with-fpu=fpv4-sp-d16 --with-float=hard --with-mode=thumb --enable-interwork --enable-multilib --disable-newlib-supplied-syscalls --with-gnu-as --with-gnu-ld --disable-nls --enable-newlib-nano-malloc
+$PREFIX/src/$NEWLIB/configure --target=$TARGET --prefix=$PREFIX --with-cpu=cortex-m3 --with-float=soft --with-mode=thumb --enable-interwork --enable-multilib --disable-newlib-supplied-syscalls --with-gnu-as --with-gnu-ld --disable-nls --enable-newlib-nano-malloc
 # The meaning of flags:
 # --disable-newlib-supplied-syscalls ... disable syscalls, because we are building for bare-metal target.
 # --enable-newlib-nano-malloc ... enable nano implementation of malloc suitable for devices with limited memory resources
@@ -264,7 +264,7 @@ make install
 # 3.6 Build & install newlib library
 export PATH=$PREFIX/build/nano-libs/bin:$OLDPATH
 cd $PREFIX/build/$NEWLIB_NANO
-$PREFIX/src/$NEWLIB_NANO/configure --target=$TARGET --prefix=$PREFIX/build/nano-libs  --with-cpu=cortex-m4 --with-fpu=fpv4-sp-d16 --with-float=hard --with-mode=thumb --enable-interwork --enable-multilib --with-gnu-as --with-gnu-ld --disable-nls --disable-newlib-supplied-syscalls --enable-newlib-reent-small --disable-newlib-fvwrite-in-streamio --disable-newlib-fseek-optimization --disable-newlib-wide-orient --enable-newlib-nano-malloc --disable-newlib-unbuf-stream-opt --enable-lite-exit --enable-newlib-global-atexit
+$PREFIX/src/$NEWLIB_NANO/configure --target=$TARGET --prefix=$PREFIX/build/nano-libs  --with-cpu=cortex-m3 --with-float=soft --with-mode=thumb --enable-interwork --enable-multilib --with-gnu-as --with-gnu-ld --disable-nls --disable-newlib-supplied-syscalls --enable-newlib-reent-small --disable-newlib-fvwrite-in-streamio --disable-newlib-fseek-optimization --disable-newlib-wide-orient --enable-newlib-nano-malloc --disable-newlib-unbuf-stream-opt --enable-lite-exit --enable-newlib-global-atexit
 # The meaning of flags:
 # --disable-newlib-supplied-syscalls ... disable syscalls, because we are building for bare-metal target.
 # --enable-newlib-nano-malloc ... enable nano implementation of malloc suitable for devices with limited memory resources
@@ -274,7 +274,7 @@ make install
 # 3.7 Build & install GCC C, C++, libstdc++ with newlib library
 export PATH=$PREFIX/bin:$OLDPATH
 cd $PREFIX/build/$GCC
-$PREFIX/src/$GCC/configure --target=$TARGET --prefix=$PREFIX --with-cpu=cortex-m4 --with-fpu=fpv4-sp-d16 --with-float=hard --with-mode=thumb --enable-interwork --enable-interwork --enable-multilib --with-system-zlib --with-newlib --disable-shared --disable-nls --with-gnu-as --with-gnu-ld --enable-languages="c,c++"
+$PREFIX/src/$GCC/configure --target=$TARGET --prefix=$PREFIX --with-cpu=cortex-m3 --with-float=soft --with-mode=thumb --enable-interwork --enable-interwork --enable-multilib --with-system-zlib --with-newlib --disable-shared --disable-nls --with-gnu-as --with-gnu-ld --enable-languages="c,c++"
 # make clean
 make -j4 all
 make install
@@ -282,7 +282,7 @@ make install
 # 3.8 Build & install GCC C, C++, libstdc++ with newlib-nano library
 export PATH=$PREFIX/build/nano-libs/bin:$OLDPATH
 cd $PREFIX/build/$GCC-nano
-$PREFIX/src/$GCC/configure --target=$TARGET --prefix=$PREFIX/build/nano-libs --with-cpu=cortex-m4 --with-fpu=fpv4-sp-d16 --with-float=hard --with-mode=thumb --enable-interwork --enable-interwork --enable-multilib --with-system-zlib --with-newlib --disable-shared --disable-nls --with-gnu-as --with-gnu-ld --enable-languages="c,c++"
+$PREFIX/src/$GCC/configure --target=$TARGET --prefix=$PREFIX/build/nano-libs --with-cpu=cortex-m3 --with-float=soft --with-mode=thumb --enable-interwork --enable-interwork --enable-multilib --with-system-zlib --with-newlib --disable-shared --disable-nls --with-gnu-as --with-gnu-ld --enable-languages="c,c++"
 # make clean
 make -j4 all
 make install # To $PREFIX/build/nano-libs
